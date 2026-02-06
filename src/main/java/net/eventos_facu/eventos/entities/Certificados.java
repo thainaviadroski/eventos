@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -42,8 +44,8 @@ public class Certificados {
     private Eventos evento;
 
 
-    @ManyToMany(mappedBy = "certificados", fetch = FetchType.LAZY)
-    private Set<Academicos> academicos = new HashSet<>();
+    @OneToMany(mappedBy = "certificado")
+    private List<AcademicosCertificados> academicos = new ArrayList<>();
 
     @Column(updatable = false)
     private String createdBy;

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -43,10 +44,7 @@ public class Academicos {
     @Column
     private Instant updated;
 
-    @ManyToMany
-    @JoinTable(
-            name = "academico_certificado",
-            joinColumns = @JoinColumn(name = "academico_id"),
-            inverseJoinColumns = @JoinColumn(name = "certificado_id"))
-    List<Certificados> certificados;
+
+    @OneToMany(mappedBy = "academico")
+    private List<AcademicosCertificados> certificados = new ArrayList<>();
 }

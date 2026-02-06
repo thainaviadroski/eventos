@@ -35,6 +35,9 @@ public class Eventos {
     @Column
     private LocalDateTime dtFinal;
 
+    @Column
+    private String slug;
+
     @Column(updatable = false)
     private String createdBy;
 
