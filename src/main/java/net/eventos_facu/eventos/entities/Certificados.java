@@ -47,6 +47,10 @@ public class Certificados {
     @OneToMany(mappedBy = "certificado")
     private List<AcademicosCertificados> academicos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "certificado")
+    private List<CertitificadoImages> imagens = new ArrayList<CertitificadoImages>();
+
+
     @Column(updatable = false)
     private String createdBy;
 
