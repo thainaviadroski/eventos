@@ -26,7 +26,7 @@ public class Eventos {
     @Column(nullable = false)
     private String evento;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Column
@@ -42,12 +42,12 @@ public class Eventos {
     private String createdBy;
 
     @Column(updatable = false)
-    private Instant created;
+    private LocalDateTime created;
 
     private String updatedBy;
 
     @Column
-    private Instant updated;
+    private LocalDateTime updated;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "evento", fetch = FetchType.LAZY)

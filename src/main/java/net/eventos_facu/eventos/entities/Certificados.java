@@ -7,9 +7,7 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Getter
@@ -25,17 +23,23 @@ public class Certificados {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+
     @Column
     private String cabecalho;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String corpo;
 
     @Column
     private String rodape;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String descricao;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private TiposCertificados tiposCertificados;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(fetch = FetchType.LAZY)

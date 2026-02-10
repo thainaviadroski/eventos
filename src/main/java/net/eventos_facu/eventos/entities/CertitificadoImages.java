@@ -18,7 +18,7 @@ import java.time.Instant;
 public class CertitificadoImages {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
