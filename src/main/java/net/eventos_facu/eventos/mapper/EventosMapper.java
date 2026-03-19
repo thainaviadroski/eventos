@@ -1,13 +1,14 @@
 package net.eventos_facu.eventos.mapper;
 
-import net.eventos_facu.eventos.dto.EventoDto;
+import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
+import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EventosMapper {
 
-    public Eventos toEntity(EventoDto evento) {
+    public Eventos toEntity(EventoRequestDto evento) {
         return Eventos.builder()
                 .evento(evento.evento())
                 .descricao(evento.descricao())
@@ -22,8 +23,10 @@ public class EventosMapper {
     }
 
 
-    EventoDto toDto(Eventos evento) {
-        return new EventoDto(evento.getEvento(), evento.getDescricao(), evento.getDtInicio(), evento.getDtFinal(), evento.getCreatedBy(), evento.getUpdatedBy(), evento.getCreated(), evento.getUpdated());
+    public EventosResponseDto toDto(Eventos evento) {
+        return new EventosResponseDto(evento.getId(), evento.getEvento(), evento.getDescricao(), evento.getDtInicio(),
+                evento.getDtFinal(), evento.getSlug(), evento.getCreatedBy(), evento.getUpdatedBy(), evento.getCreated(),
+                evento.getUpdated());
     }
 
 

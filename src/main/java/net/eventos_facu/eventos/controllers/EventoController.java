@@ -1,6 +1,7 @@
 package net.eventos_facu.eventos.controllers;
 
-import net.eventos_facu.eventos.dto.EventoDto;
+import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
+import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.services.EventosService;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/eventos")
@@ -26,7 +26,7 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<Eventos> createNewEvento(@RequestBody EventoDto evento) {
+    public ResponseEntity<Eventos> createNewEvento(@RequestBody EventoRequestDto evento) {
         logger.info("Created new Evento: {}", evento);
 
         Eventos result = service.createNewEvento(evento);
@@ -35,7 +35,7 @@ public class EventoController {
     }
 
     @GetMapping
-    public Page<Eventos> getAllEventos(Pageable pageable) {
+    public Page<EventosResponseDto> getAllEventos(Pageable pageable) {
         return ResponseEntity.ok(service.getAllEventos(pageable)).getBody();
     }
 

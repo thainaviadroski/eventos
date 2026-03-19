@@ -1,10 +1,10 @@
-package net.eventos_facu.eventos.dto;
+package net.eventos_facu.eventos.dto.eventos;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 
-public record EventoDto(String evento, String descricao, LocalDateTime dtInicio, LocalDateTime dtFinal, String createdBy,
-                        String updatedBy, LocalDateTime created, LocalDateTime updated) {
+public record EventoRequestDto(String evento, String descricao, LocalDateTime dtInicio, LocalDateTime dtFinal, String createdBy,
+                               String updatedBy, LocalDateTime created, LocalDateTime updated) {
 
     public String slug() {
         return Normalizer.normalize(this.evento, Normalizer.Form.NFD).toLowerCase()
