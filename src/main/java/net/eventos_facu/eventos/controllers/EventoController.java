@@ -9,7 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -26,11 +28,27 @@ public class EventoController {
     @PostMapping
     public ResponseEntity<Eventos> createNewEvento(@RequestBody EventoDto evento) {
         logger.info("Created new Evento: {}", evento);
-        return ResponseEntity.of(Optional.of(service.createNewEvento(evento)));
+
+        Eventos result = service.createNewEvento(evento);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.getId()).toUri();
+        return ResponseEntity.created(location).body(result);
     }
 
     @GetMapping
     public Page<Eventos> getAllEventos(Pageable pageable) {
         return ResponseEntity.ok(service.getAllEventos(pageable)).getBody();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Eventos> getEventoById(@PathVariable long id) {
+        logger.info("Getting Evento with id: {}", id);
+        return service.findOneById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<Eventos> getEventoBySlug(@PathVariable String slug) {
+        logger.info("Getting Evento with Slug: {}", slug);
+        return service.findBySlug(slug).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }

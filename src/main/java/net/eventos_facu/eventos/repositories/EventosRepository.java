@@ -11,4 +11,5 @@ public interface EventosRepository extends JpaRepository<Eventos, Long> {
 
     Optional<List<Eventos>> findByEvento(String evento);
 
+    Optional<Eventos> findBySlug(String slug);
 }

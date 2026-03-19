@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,5 +43,13 @@ public class EventosService {
 
     public Page<Eventos> getAllEventos(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+    public Optional<Eventos> findOneById(long id) {
+        return  repository.findById(id);
+    }
+
+    public Optional<Eventos> findBySlug(String slug) {
+        return repository.findBySlug(slug);
     }
 }
