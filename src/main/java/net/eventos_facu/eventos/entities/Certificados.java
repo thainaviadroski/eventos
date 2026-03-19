@@ -23,8 +23,6 @@ public class Certificados {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-
     @Column
     private String cabecalho;
 

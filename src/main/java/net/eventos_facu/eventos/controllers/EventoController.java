@@ -1,15 +1,14 @@
 package net.eventos_facu.eventos.controllers;
 
-import net.eventos_facu.eventos.dto.EventoDto.EventoDto;
+import net.eventos_facu.eventos.dto.EventoDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.services.EventosService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -30,4 +29,8 @@ public class EventoController {
         return ResponseEntity.of(Optional.of(service.createNewEvento(evento)));
     }
 
+    @GetMapping
+    public Page<Eventos> getAllEventos(Pageable pageable) {
+        return ResponseEntity.ok(service.getAllEventos(pageable)).getBody();
+    }
 }

@@ -1,11 +1,14 @@
 package net.eventos_facu.eventos.services;
 
-import net.eventos_facu.eventos.dto.EventoDto.EventoDto;
+import net.eventos_facu.eventos.dto.EventoDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.mapper.EventosMapper;
 import net.eventos_facu.eventos.repositories.EventosRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,13 +30,11 @@ public class EventosService {
     public Eventos createNewEvento(EventoDto eventoDto) {
         Eventos evento = eventoMapper.toEntity(eventoDto);
         Optional<List<Eventos>> eventos = repository.findByEvento(eventoDto.evento());
-//        Valida se existe um slug igual caso tenha ele adicona o numero
+
         if (eventos.isPresent() && !eventos.get().isEmpty()) {
             int size = eventos.get().size() + 1;
             evento.setSlug(eventoDto.slug() + "-" + size);
         }
-
-
         return save(evento);
     }
 
@@ -41,5 +42,7 @@ public class EventosService {
         return repository.save(evento);
     }
 
-
+    public Page<Eventos> getAllEventos(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
 }

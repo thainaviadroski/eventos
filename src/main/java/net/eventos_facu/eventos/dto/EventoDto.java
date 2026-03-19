@@ -1,4 +1,4 @@
-package net.eventos_facu.eventos.dto.EventoDto;
+package net.eventos_facu.eventos.dto;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;

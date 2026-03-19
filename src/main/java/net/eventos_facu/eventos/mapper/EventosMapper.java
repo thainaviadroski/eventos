@@ -1,6 +1,6 @@
 package net.eventos_facu.eventos.mapper;
 
-import net.eventos_facu.eventos.dto.EventoDto.EventoDto;
+import net.eventos_facu.eventos.dto.EventoDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import org.springframework.stereotype.Component;
 
