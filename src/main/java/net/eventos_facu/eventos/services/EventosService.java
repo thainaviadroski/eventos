@@ -3,6 +3,7 @@ package net.eventos_facu.eventos.services;
 
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
+import net.eventos_facu.eventos.dto.eventos.EventosUpdateDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.mapper.EventosMapper;
 import net.eventos_facu.eventos.repositories.EventosRepository;
@@ -49,11 +50,21 @@ public class EventosService {
         return repository.findAll(pageable).map(eventoMapper::toDto);
     }
 
-    public Optional<Eventos> findOneById(long id) {
-        return repository.findById(id);
+    public Optional<EventosResponseDto> findById(long id) {
+        return repository.findById(id).map(eventoMapper::toDto);
     }
 
-    public Optional<Eventos> findBySlug(String slug) {
-        return repository.findBySlug(slug);
+    public Optional<EventosResponseDto> findBySlug(String slug) {
+        return repository.findBySlug(slug).map(eventoMapper::toDto);
     }
+
+    @Transactional
+    public EventosResponseDto update(Long id, EventosUpdateDto evento) {
+        logger.info("Updating evento with id: " + id);
+        Eventos e = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found with id " + id));
+        eventoMapper.updateEntity(e, evento);
+        return eventoMapper.toDtoResponse(e);
+    }
+
 }

@@ -2,6 +2,7 @@ package net.eventos_facu.eventos.controllers;
 
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
+import net.eventos_facu.eventos.dto.eventos.EventosUpdateDto;
 import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.services.EventosService;
 import org.slf4j.Logger;
@@ -40,15 +41,22 @@ public class EventoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Eventos> getEventoById(@PathVariable long id) {
+    public ResponseEntity<EventosResponseDto> getEventoById(@PathVariable long id) {
         logger.info("Getting Evento with id: {}", id);
-        return service.findOneById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return service.findById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<Eventos> getEventoBySlug(@PathVariable String slug) {
+    public ResponseEntity<EventosResponseDto> getEventoBySlug(@PathVariable String slug) {
         logger.info("Getting Evento with Slug: {}", slug);
         return service.findBySlug(slug).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EventosResponseDto> updateEvento(@PathVariable long id, @RequestBody EventosUpdateDto evento) {
+        logger.info("Updating Evento with id: {}", id);
+        EventosResponseDto response = service.update(id, evento);
+        return ResponseEntity.ok(response);
     }
 
 }
