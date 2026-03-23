@@ -56,7 +56,6 @@ public class EventoController {
     public ResponseEntity<EventosResponseDto> updateEvento(@PathVariable long id, @RequestBody EventosUpdateDto evento) {
         logger.info("Updating Evento with id: {}", id);
         EventosResponseDto response = service.update(id, evento);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response) ;
     }
-
 }

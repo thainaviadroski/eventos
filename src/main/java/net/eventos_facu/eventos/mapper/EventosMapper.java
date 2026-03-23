@@ -25,18 +25,18 @@ public class EventosMapper {
 
 
     public EventosResponseDto toDto(Eventos evento) {
-        return new EventosResponseDto(evento.getId(), evento.getEvento(), evento.getDescricao(), evento.getDtInicio(),
-                evento.getDtFinal(), evento.getSlug(), evento.getCreatedBy(), evento.getUpdatedBy(), evento.getCreated(),
+        return new EventosResponseDto(evento.getId(), evento.getEvento(), evento.getDescricao(), evento.getSlug(), evento.getDtInicio(),
+                evento.getDtFinal(), evento.getCreatedBy(), evento.getUpdatedBy(), evento.getCreated(),
                 evento.getUpdated());
     }
 
     public EventosResponseDto toDtoResponse(Eventos evento) {
-        return new EventosResponseDto(evento.getId(), evento.getEvento(), evento.getDescricao(), evento.getDtInicio(),
-                evento.getDtFinal(), evento.getSlug(), evento.getCreatedBy(), evento.getUpdatedBy(), evento.getCreated(),
+        return new EventosResponseDto(evento.getId(), evento.getEvento(), evento.getDescricao(), evento.getSlug(), evento.getDtInicio(),
+                evento.getDtFinal(), evento.getCreatedBy(), evento.getUpdatedBy(), evento.getCreated(),
                 evento.getUpdated());
     }
 
-    public void updateEntity(Eventos evento,EventosUpdateDto eventosUpdateDto) {
+    public void updateEntity(Eventos evento, EventosUpdateDto eventosUpdateDto) {
         evento.setEvento(eventosUpdateDto.evento());
         evento.setDescricao(eventosUpdateDto.descricao());
         evento.setDtInicio(eventosUpdateDto.dtInicio());

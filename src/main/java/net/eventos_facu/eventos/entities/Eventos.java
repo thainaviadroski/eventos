@@ -17,6 +17,7 @@ import java.util.Set;
 @ToString
 @Builder
 @Entity
+@EqualsAndHashCode(exclude = {"certificados"})
 @Table(name = "eventos")
 public class Eventos {
 
