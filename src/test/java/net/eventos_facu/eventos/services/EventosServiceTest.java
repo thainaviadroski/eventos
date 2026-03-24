@@ -4,6 +4,7 @@ package net.eventos_facu.eventos.services;
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.entities.Eventos;
+import net.eventos_facu.eventos.exceptions.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.EventosMapper;
 import net.eventos_facu.eventos.repositories.EventosRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -170,7 +171,21 @@ public class EventosServiceTest {
 
             // Act & Assert
             assertThatThrownBy(() -> eventosService.findById(EVENT_ID))
-                    .isInstanceOf(NoSuchElementException.class);
+                    .isInstanceOf(ResourceNotFoundException.class);
+
+            verify(eventosMapper, never()).toDto(any());
+        }
+
+
+        @Test
+        @DisplayName("deve lançar exceção quando id não existe")
+        void findBySlugNotFound() {
+            // Arrange
+            when(eventosRepository.findBySlug(SLUG)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThatThrownBy(() -> eventosService.findById(EVENT_ID))
+                    .isInstanceOf(ResourceNotFoundException.class);
 
             verify(eventosMapper, never()).toDto(any());
         }
