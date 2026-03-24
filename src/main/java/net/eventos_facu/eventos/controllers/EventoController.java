@@ -3,7 +3,6 @@ package net.eventos_facu.eventos.controllers;
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.dto.eventos.EventosUpdateDto;
-import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.services.EventosService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

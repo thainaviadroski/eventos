@@ -5,6 +5,7 @@ import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.dto.eventos.EventosUpdateDto;
 import net.eventos_facu.eventos.entities.Eventos;
+import net.eventos_facu.eventos.exceptions.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.EventosMapper;
 import net.eventos_facu.eventos.repositories.EventosRepository;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -54,13 +54,13 @@ public class EventosService {
     public EventosResponseDto findById(long id) {
         return repository.findById(id)
                 .map(eventoMapper::toDto)
-                .orElseThrow(() -> new NoSuchElementException("Evento não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado com id: " + id));
     }
 
     public EventosResponseDto findBySlug(String slug) {
         return repository.findBySlug(slug)
                 .map(eventoMapper::toDto)
-                .orElseThrow(() -> new NoSuchElementException("Evento não encontrado com slug: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado com slug: " + slug));
     }
 
     @Transactional
