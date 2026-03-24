@@ -27,11 +27,10 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<Eventos> createNewEvento(@RequestBody EventoRequestDto evento) {
+    public ResponseEntity<EventosResponseDto> createNewEvento(@RequestBody EventoRequestDto evento) {
         logger.info("Created new Evento: {}", evento);
-
-        Eventos result = service.createNewEvento(evento);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.getId()).toUri();
+        EventosResponseDto result = service.createNewEvento(evento);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.id()).toUri();
         return ResponseEntity.created(location).body(result);
     }
 
@@ -43,19 +42,19 @@ public class EventoController {
     @GetMapping("/{id}")
     public ResponseEntity<EventosResponseDto> getEventoById(@PathVariable long id) {
         logger.info("Getting Evento with id: {}", id);
-        return service.findById(id).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ofNullable(service.findById(id));
     }
 
     @GetMapping("/slug/{slug}")
     public ResponseEntity<EventosResponseDto> getEventoBySlug(@PathVariable String slug) {
         logger.info("Getting Evento with Slug: {}", slug);
-        return service.findBySlug(slug).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ofNullable(service.findBySlug(slug));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<EventosResponseDto> updateEvento(@PathVariable long id, @RequestBody EventosUpdateDto evento) {
         logger.info("Updating Evento with id: {}", id);
         EventosResponseDto response = service.update(id, evento);
-        return ResponseEntity.ok(response) ;
+        return ResponseEntity.ok(response);
     }
 }

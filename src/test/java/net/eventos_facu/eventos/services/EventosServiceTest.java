@@ -13,8 +13,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -92,19 +99,19 @@ public class EventosServiceTest {
 
             when(eventosMapper.toEntity(request)).thenReturn(entity);
             when(eventosRepository.save(entity)).thenReturn(entity);
-     //       when(eventosMapper.toDto(entity)).thenReturn(expected);
+            when(eventosMapper.toDtoResponse(entity)).thenReturn(expected);
 
             // Act — sem essa linha os stubbings acima ficam "mortos"
-            Eventos result = eventosService.createNewEvento(request);
+            EventosResponseDto result = eventosService.createNewEvento(request);
 
             // Assert
             assertThat(result).isNotNull();
-            assertThat(result.getId()).isEqualTo(EVENT_ID);
-            assertThat(result.getEvento()).isEqualTo(EVENTO);
+            assertThat(result.id()).isEqualTo(EVENT_ID);
+            assertThat(result.evento()).isEqualTo(EVENTO);
 
             verify(eventosMapper).toEntity(request);
             verify(eventosRepository).save(entity);
-            //verify(eventosMapper).toDto(entity);
+            verify(eventosMapper).toDtoResponse(entity);
         }
 
     }
@@ -114,16 +121,78 @@ public class EventosServiceTest {
     @DisplayName("Find Eventos")
     class Find {
         @Test
+        @DisplayName("deve retornar página com eventos mapeados")
         void getAllEventos() {
+            // Arrange
+            Eventos entity = buildEntity();
+            EventosResponseDto response = buildResponseDto(entity);
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Eventos> page = new PageImpl<>(List.of(entity), pageable, 1);
+
+            when(eventosRepository.findAll(pageable)).thenReturn(page);
+            when(eventosMapper.toDto(entity)).thenReturn(response);
+
+            // Act
+            Page<EventosResponseDto> result = eventosService.getAllEventos(pageable);
+
+            // Assert
+            assertThat(result.getTotalElements()).isEqualTo(1);
+            assertThat(result.getContent().get(0).evento()).isEqualTo(EVENTO);
+
+            verify(eventosRepository).findAll(pageable);
         }
 
         @Test
+        @DisplayName("deve retornar evento pelo id")
         void findById() {
+            // Arrange
+            Eventos entity = buildEntity();
+            EventosResponseDto response = buildResponseDto(entity);
+
+            when(eventosRepository.findById(EVENT_ID)).thenReturn(Optional.of(entity));
+            when(eventosMapper.toDto(entity)).thenReturn(response);
+
+            // Act
+            EventosResponseDto result = eventosService.findById(EVENT_ID);
+
+            // Assert
+            assertThat(result).isNotNull();
+            assertThat(result.id()).isEqualTo(EVENT_ID);
+
+            verify(eventosRepository).findById(EVENT_ID);
         }
 
+        @Test
+        @DisplayName("deve lançar exceção quando id não existe")
+        void findByIdNotFound() {
+            // Arrange
+            when(eventosRepository.findById(EVENT_ID)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThatThrownBy(() -> eventosService.findById(EVENT_ID))
+                    .isInstanceOf(NoSuchElementException.class);
+
+            verify(eventosMapper, never()).toDto(any());
+        }
 
         @Test
+        @DisplayName("deve retornar evento pelo slug")
         void findBySlug() {
+            // Arrange
+            Eventos entity = buildEntity();
+            EventosResponseDto response = buildResponseDto(entity);
+
+            when(eventosRepository.findBySlug(SLUG)).thenReturn(Optional.of(entity));
+            when(eventosMapper.toDto(entity)).thenReturn(response);
+
+            // Act
+            EventosResponseDto result = eventosService.findBySlug(SLUG);
+
+            // Assert
+            assertThat(result).isNotNull();
+            assertThat(result.slug()).isEqualTo(SLUG);
+
+            verify(eventosRepository).findBySlug(SLUG);
         }
     }
 

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -30,7 +31,7 @@ public class EventosService {
         this.repository = repository;
     }
 
-    public Eventos createNewEvento(EventoRequestDto eventoDto) {
+    public EventosResponseDto createNewEvento(EventoRequestDto eventoDto) {
         Eventos evento = eventoMapper.toEntity(eventoDto);
         Optional<List<Eventos>> eventos = repository.findByEvento(eventoDto.evento());
 
@@ -38,7 +39,7 @@ public class EventosService {
             int size = eventos.get().size() + 1;
             evento.setSlug(eventoDto.slug() + "-" + size);
         }
-        return save(evento);
+        return eventoMapper.toDtoResponse(save(evento));
     }
 
     private Eventos save(Eventos evento) {
@@ -50,12 +51,16 @@ public class EventosService {
         return repository.findAll(pageable).map(eventoMapper::toDto);
     }
 
-    public Optional<EventosResponseDto> findById(long id) {
-        return repository.findById(id).map(eventoMapper::toDto);
+    public EventosResponseDto findById(long id) {
+        return repository.findById(id)
+                .map(eventoMapper::toDto)
+                .orElseThrow(() -> new NoSuchElementException("Evento não encontrado com id: " + id));
     }
 
-    public Optional<EventosResponseDto> findBySlug(String slug) {
-        return repository.findBySlug(slug).map(eventoMapper::toDto);
+    public EventosResponseDto findBySlug(String slug) {
+        return repository.findBySlug(slug)
+                .map(eventoMapper::toDto)
+                .orElseThrow(() -> new NoSuchElementException("Evento não encontrado com slug: " + slug));
     }
 
     @Transactional
