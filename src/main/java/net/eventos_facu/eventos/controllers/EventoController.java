@@ -1,5 +1,6 @@
 package net.eventos_facu.eventos.controllers;
 
+import jakarta.validation.Valid;
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.dto.eventos.EventosUpdateDto;
@@ -26,7 +27,7 @@ public class EventoController {
     }
 
     @PostMapping
-    public ResponseEntity<EventosResponseDto> createNewEvento(@RequestBody EventoRequestDto evento) {
+    public ResponseEntity<EventosResponseDto> createNewEvento(@Valid @RequestBody EventoRequestDto evento) {
         logger.info("Created new Evento: {}", evento);
         EventosResponseDto result = service.createNewEvento(evento);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.id()).toUri();
