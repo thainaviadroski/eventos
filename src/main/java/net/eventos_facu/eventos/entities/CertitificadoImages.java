@@ -34,5 +34,4 @@ public class CertitificadoImages {
     @Column
     private Instant created;
 
-
 }

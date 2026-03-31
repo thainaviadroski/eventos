@@ -1,7 +1,7 @@
 package net.eventos_facu.eventos.controllers;
 
 
-import net.eventos_facu.eventos.dto.certificados.CertiificadoRequestDto;
+import net.eventos_facu.eventos.dto.certificados.CertificadoRequestDto;
 import net.eventos_facu.eventos.entities.Certificados;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class CertificadosController {
     private Logger logger = LoggerFactory.getLogger(CertificadosController.class);
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createNewCertificado(@RequestPart CertiificadoRequestDto certiificado,
+    public void createNewCertificado(@RequestPart CertificadoRequestDto certiificado,
                                      @RequestPart("fundo") MultipartFile fundo,
                                      @RequestPart("verso") MultipartFile verso) {
 

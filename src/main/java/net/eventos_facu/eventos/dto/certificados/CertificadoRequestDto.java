@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
 
-public record CertiificadoRequestDto(
+public record CertificadoRequestDto(
         @NotNull Long eventoId,
         @NotNull String cabecalho,
         @NotNull String corpo,
