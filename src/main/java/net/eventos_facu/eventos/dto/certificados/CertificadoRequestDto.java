@@ -3,6 +3,7 @@ package net.eventos_facu.eventos.dto.certificados;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public record CertificadoRequestDto(
         @NotNull Long eventoId,
@@ -11,6 +12,6 @@ public record CertificadoRequestDto(
         @NotNull String rodape,
         @NotNull String tipoCertifica,
         String createdBy,
-        Instant created
+        LocalDateTime created
 ) {
 }

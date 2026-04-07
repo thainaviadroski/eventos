@@ -51,7 +51,7 @@ public class Certificados {
     private List<AcademicosCertificados> academicos = new ArrayList<>();
 
     @OneToMany(mappedBy = "certificado")
-    private List<CertitificadoImages> imagens = new ArrayList<CertitificadoImages>();
+    private List<CertificadoImages> imagens = new ArrayList<CertificadoImages>();
 
     @Column(updatable = false)
     private String createdBy;

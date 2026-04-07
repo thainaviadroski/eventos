@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -15,7 +16,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Entity
 @Table(name = "certificado_images")
-public class CertitificadoImages {
+public class CertificadoImages {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,6 +26,9 @@ public class CertitificadoImages {
     private String path;
 
     @Column
+    private String contentType;
+
+    @Column
     private Boolean verso;
 
     @ManyToOne
@@ -32,6 +36,6 @@ public class CertitificadoImages {
     private Certificados certificado;
 
     @Column
-    private Instant created;
+    private LocalDateTime created;
 
 }

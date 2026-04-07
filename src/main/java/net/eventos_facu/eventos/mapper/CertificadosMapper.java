@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CertificadosMapper {
     public Certificados toEntity(CertificadoRequestDto certificado) {
-
         return Certificados.builder()
                 .cabecalho(certificado.cabecalho())
                 .corpo(certificado.corpo())
@@ -26,6 +25,4 @@ public class CertificadosMapper {
             throw new IllegalArgumentException("Tipo do certificado invalido" + e.getMessage());
         }
     }
-
-
 }

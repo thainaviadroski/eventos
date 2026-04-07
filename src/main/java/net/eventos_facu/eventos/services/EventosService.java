@@ -1,6 +1,7 @@
 package net.eventos_facu.eventos.services;
 
 
+import lombok.RequiredArgsConstructor;
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.dto.eventos.EventosUpdateDto;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class EventosService {
 
     private Logger logger = LoggerFactory.getLogger(EventosService.class);
@@ -26,10 +28,6 @@ public class EventosService {
     private final EventosMapper eventoMapper;
     private final EventosRepository repository;
 
-    public EventosService(EventosMapper eventoMapper, EventosRepository repository) {
-        this.eventoMapper = eventoMapper;
-        this.repository = repository;
-    }
 
     public EventosResponseDto createNewEvento(EventoRequestDto eventoDto) {
         Eventos evento = eventoMapper.toEntity(eventoDto);

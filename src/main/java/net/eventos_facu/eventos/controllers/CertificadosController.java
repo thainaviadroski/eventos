@@ -18,10 +18,9 @@ public class CertificadosController {
     private Logger logger = LoggerFactory.getLogger(CertificadosController.class);
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createNewCertificado(@RequestPart CertificadoRequestDto certiificado,
+    public void createNewCertificado(@RequestPart CertificadoRequestDto certificado,
                                      @RequestPart("fundo") MultipartFile fundo,
                                      @RequestPart("verso") MultipartFile verso) {
-
     }
 
     @GetMapping

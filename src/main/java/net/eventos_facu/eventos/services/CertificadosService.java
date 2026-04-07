@@ -1,6 +1,7 @@
 package net.eventos_facu.eventos.services;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import net.eventos_facu.eventos.dto.certificados.CertificadoRequestDto;
 import net.eventos_facu.eventos.entities.Certificados;
 import net.eventos_facu.eventos.entities.Eventos;
@@ -13,16 +14,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CertificadosService {
-    private Logger logger = LoggerFactory.getLogger(CertificadosService.class);
+    private Logger logger = LoggerFactory.getLogger(EventosService.class);
 
     private final CertificadosRepository reposioty;
     private final CertificadosMapper mapper;
     private final EventosRepository eventosRepository;
 
     public void createNewCertificado(CertificadoRequestDto certificado) {
-        Eventos evento = eventosRepository.findById(certificado.eventoId()).orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado com id: " + certificado.eventoId()));
+        Eventos evento = eventosRepository.findById(certificado.eventoId())
+                .orElseThrow(() -> new ResourceNotFoundException("Evento não encontrado com id: " + certificado.eventoId()));
         Certificados entity = mapper.toEntity(certificado);
         entity.setEvento(evento);
         entity = save(entity);
