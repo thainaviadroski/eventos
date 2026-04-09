@@ -9,8 +9,11 @@ import net.eventos_facu.eventos.exceptions.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.CertificadosMapper;
 import net.eventos_facu.eventos.repositories.CertificadosRepository;
 import net.eventos_facu.eventos.repositories.EventosRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +47,11 @@ public class CertificadosService {
 
     private Certificados save(Certificados entity) {
         return repository.save(entity);
+    }
+
+
+    public Page<CertificadoResponseDto> findAll(Pageable pageable) {
+        return repository.findAll(pageable).map(mapper::toDtoResponse);
     }
 
     public CertificadoResponseDto findById(Long id) {
