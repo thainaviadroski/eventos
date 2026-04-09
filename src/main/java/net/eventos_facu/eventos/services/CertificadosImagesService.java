@@ -5,6 +5,8 @@ import net.eventos_facu.eventos.entities.CertificadoImages;
 import net.eventos_facu.eventos.entities.Certificados;
 import net.eventos_facu.eventos.repositories.CertificadoImagesRepository;
 import net.eventos_facu.eventos.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +15,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CertificadosImagesService {
+
+    private final Logger logger = LoggerFactory.getLogger(CertificadosImagesService.class);
 
     private final CertificadoImagesRepository repository;
 
@@ -33,11 +38,17 @@ public class CertificadosImagesService {
      * */
     @Transactional
     public void createNewCertificadoImages(MultipartFile image, Certificados certificados) throws IOException {
+        logger.info("Request save image certificado.id: {}", certificados.getId());
         String fileName = fileName(image.getOriginalFilename(), certificados.getId(), false);
         try {
-            CertificadoImages img = new CertificadoImages();
-            img.setCertificado(certificados);
+            CertificadoImages entity = new CertificadoImages();
+            entity.setCertificado(certificados);
+            entity.setPath(fileName);
+            entity.setCreated(LocalDateTime.now());
+            entity.setContentType(image.getContentType());
+            entity.setVerso(false);
             fileUtils.saveFile(Path.of(fileName), image.getBytes());
+            save(entity);
         } catch (Exception e) {
             remove(Path.of(fileName));
         }
@@ -51,10 +62,12 @@ public class CertificadosImagesService {
         fileUtils.deleteFile(path);
     }
 
-    //Vamos criar um nome novo para a imagem padronizando a nomeclatura e diferenciando a imagem de fundo da imagem do verso
-    private String fileName(String str, Long certificadoId, boolean isVerso) {
-        return diretory + File.separator + certificadoId + "-" + UUID.randomUUID().toString() + "-" + str;
+    private String fileName(String fileNameOriginal, Long certificadoId, boolean isVerso) {
+        String extensionFile = fileNameOriginal.substring(fileNameOriginal.lastIndexOf("."));
+        if (isVerso) {
+            return diretory + File.separator + certificadoId + "-" + UUID.randomUUID().toString() + "-" + "verso" + extensionFile;
+        }
+        return diretory + File.separator + certificadoId + "-" + UUID.randomUUID().toString() + extensionFile;
     }
-
 
 }
