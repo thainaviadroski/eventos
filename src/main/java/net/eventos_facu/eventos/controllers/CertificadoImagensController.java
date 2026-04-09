@@ -14,6 +14,11 @@ public class CertificadoImagensController {
      * Rota para carregar as imagens
      * */
 
+    @PostMapping("/verso/{certificadoId}")
+    public void addImageVerso(@PathVariable Long certificadoId, @RequestParam("file") MultipartFile file) {
+
+    }
+
     @PutMapping(value = "/{imagemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void update(@PathVariable Long imagemId, @RequestPart MultipartFile fundo) {
 
