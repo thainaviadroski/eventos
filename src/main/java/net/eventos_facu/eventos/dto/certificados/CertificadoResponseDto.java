@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.entities.TiposCertificados;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 public record CertificadoResponseDto(
@@ -14,7 +15,7 @@ public record CertificadoResponseDto(
         String rodape,
         TiposCertificados tipoCertifica,
         String createdBy,
-        LocalDateTime created
+        Instant created
 ) {
 
 }

@@ -10,6 +10,7 @@ public record CertificadoRequestDto(
         @NotNull String cabecalho,
         @NotNull String corpo,
         @NotNull String rodape,
+        String descricao,
         @NotNull String tipoCertifica,
         String createdBy,
         LocalDateTime created
