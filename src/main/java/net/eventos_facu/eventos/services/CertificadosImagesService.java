@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,7 +36,7 @@ public class CertificadosImagesService {
      * Vamos validar se o certificado já possui uma imagem cadastrada se não houver permitir que salve uma imagem
      * Se houver validar se é o verso ou não
      * Se ja houver duas imagens um frente e um verso, retornar uma exception informando que o certificado já possui as imagens
-     * */
+     */
     @Transactional
     public void createNewCertificadoImages(MultipartFile image, Certificados certificados) throws IOException {
         logger.info("Request save image certificado.id: {}", certificados.getId());
@@ -50,7 +51,7 @@ public class CertificadosImagesService {
             fileUtils.saveFile(Path.of(fileName), image.getBytes());
             save(entity);
         } catch (Exception e) {
-            remove(Path.of(fileName));
+            removeFile(Path.of(fileName));
         }
     }
 
@@ -58,7 +59,22 @@ public class CertificadosImagesService {
         return repository.save(image);
     }
 
-    private void remove(Path path) throws IOException {
+    public void remove(Long certificadoId) {
+        List<CertificadoImages> imgs = repository.findByCertificadoId(certificadoId);
+
+        imgs.forEach(img -> {
+            try {
+                removeFile(Path.of(img.getPath()));
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        imgs.forEach(repository::delete);
+        imgs.clear();
+    }
+
+    private void removeFile(Path path) throws IOException {
         fileUtils.deleteFile(path);
     }
 
@@ -70,4 +86,7 @@ public class CertificadosImagesService {
         return diretory + File.separator + certificadoId + "-" + UUID.randomUUID().toString() + extensionFile;
     }
 
+    public List<CertificadoImages> findByCertificadoId(Long certificadoId) {
+        return repository.findByCertificadoId(certificadoId);
+    }
 }

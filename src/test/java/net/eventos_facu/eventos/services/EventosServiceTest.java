@@ -4,7 +4,7 @@ package net.eventos_facu.eventos.services;
 import net.eventos_facu.eventos.dto.eventos.EventoRequestDto;
 import net.eventos_facu.eventos.dto.eventos.EventosResponseDto;
 import net.eventos_facu.eventos.entities.Eventos;
-import net.eventos_facu.eventos.exceptions.ResourceNotFoundException;
+import net.eventos_facu.eventos.exception.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.EventosMapper;
 import net.eventos_facu.eventos.repositories.EventosRepository;
 import org.junit.jupiter.api.DisplayName;

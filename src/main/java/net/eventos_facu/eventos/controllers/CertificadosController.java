@@ -1,6 +1,5 @@
 package net.eventos_facu.eventos.controllers;
 
-
 import lombok.RequiredArgsConstructor;
 import net.eventos_facu.eventos.dto.certificados.CertificadoRequestDto;
 import net.eventos_facu.eventos.dto.certificados.CertificadoResponseDto;
@@ -31,8 +30,7 @@ public class CertificadosController {
     private final CertificadosService service;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CertificadoResponseDto> createNewCertificado(@RequestPart("certificado") CertificadoRequestDto certificado,
-                                                                       @RequestPart("fundo") MultipartFile fundo) throws IOException {
+    public ResponseEntity<CertificadoResponseDto> createNewCertificado(@RequestPart("certificado") CertificadoRequestDto certificado, @RequestPart("fundo") MultipartFile fundo) throws IOException {
         logger.info("Request new certificado: {}", certificado.toString());
         CertificadoResponseDto result = service.createNewCertificado(certificado, fundo);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.id()).toUri();
@@ -58,7 +56,8 @@ public class CertificadosController {
     public void updateCertificadoById(@RequestBody Certificados c) {
     }
 
-    @DeleteMapping
-    public void deleteCertificadoById(@RequestBody Certificados c) {
+    @DeleteMapping("/{id}")
+    public void deleteCertificadoById(@PathVariable Long id) {
+        service.remove(id);
     }
 }

@@ -1,4 +1,4 @@
-package net.eventos_facu.eventos.exceptions;
+package net.eventos_facu.eventos.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

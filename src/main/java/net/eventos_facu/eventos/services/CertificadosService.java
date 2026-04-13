@@ -3,9 +3,10 @@ package net.eventos_facu.eventos.services;
 import lombok.RequiredArgsConstructor;
 import net.eventos_facu.eventos.dto.certificados.CertificadoRequestDto;
 import net.eventos_facu.eventos.dto.certificados.CertificadoResponseDto;
+import net.eventos_facu.eventos.entities.CertificadoImages;
 import net.eventos_facu.eventos.entities.Certificados;
 import net.eventos_facu.eventos.entities.Eventos;
-import net.eventos_facu.eventos.exceptions.ResourceNotFoundException;
+import net.eventos_facu.eventos.exception.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.CertificadosMapper;
 import net.eventos_facu.eventos.repositories.CertificadosRepository;
 import net.eventos_facu.eventos.repositories.EventosRepository;
@@ -66,5 +67,14 @@ public class CertificadosService {
                 .stream()
                 .map(mapper::toDtoResponse)
                 .toList();
+    }
+
+    @Transactional
+    public void remove(Long certificadoId) {
+        imagesService.remove(certificadoId);
+
+        repository.deleteById(certificadoId);
+
+
     }
 }
