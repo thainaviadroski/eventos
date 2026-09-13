@@ -34,7 +34,7 @@ public class AcademicosCertificados {
     @Column(updatable = false)
     private Instant created;
 
-
-
+    @Column(name = "ch")
+    private Integer ch;
 
 }
