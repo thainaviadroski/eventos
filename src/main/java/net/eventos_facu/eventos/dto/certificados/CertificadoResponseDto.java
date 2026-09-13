@@ -10,6 +10,7 @@ public record CertificadoResponseDto(
         String cabecalho,
         String corpo,
         String rodape,
+        String descricao,
         TiposCertificados tipoCertifica,
         String createdBy,
         Instant created

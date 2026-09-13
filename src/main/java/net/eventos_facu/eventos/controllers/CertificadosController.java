@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/certificados")

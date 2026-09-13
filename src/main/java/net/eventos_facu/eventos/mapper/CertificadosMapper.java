@@ -26,6 +26,7 @@ public class CertificadosMapper {
                 certificados.getCabecalho(),
                 certificados.getCorpo(),
                 certificados.getRodape(),
+                certificados.getDescricao(),
                 certificados.getTiposCertificados(),
                 certificados.getCreatedBy(),
                 certificados.getCreated()
