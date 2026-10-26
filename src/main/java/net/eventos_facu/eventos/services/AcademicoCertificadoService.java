@@ -13,6 +13,7 @@ import net.eventos_facu.eventos.mapper.AcademicoMapper;
 import net.eventos_facu.eventos.repositories.AcademicosCertificadosRepository;
 import net.eventos_facu.eventos.repositories.AcademicosRepository;
 import net.eventos_facu.eventos.repositories.CertificadosRepository;
+import net.eventos_facu.eventos.utils.CpfUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -54,37 +55,49 @@ public class AcademicoCertificadoService {
         Certificados certificado = findCertificado(certificadoId);
         List<AcademicoCertificadoResponseDto> imported = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            boolean firstLine = true;
-            int lineNumber = 0;
-            while ((line = reader.readLine()) != null) {
-                lineNumber++;
-                if (firstLine) {
-                    firstLine = false;
-                    continue;
-                }
-                if (line.isBlank()) {
-                    continue;
-                }
-                AcademicosCertificados entity = parseLine(line, lineNumber, certificado);
-                imported.add(mapper.toDtoResponse(repository.save(entity)));
-            }
+        for (CsvLine line : readCsv(file)) {
+            AcademicosCertificados entity = parseLine(line, certificado);
+            imported.add(mapper.toDtoResponse(repository.save(entity)));
         }
 
         return imported;
     }
 
-    private AcademicosCertificados parseLine(String line, int lineNumber, Certificados certificado) {
-        String[] columns = line.split(",", -1);
+    private List<CsvLine> readCsv(MultipartFile file) throws IOException {
+        List<CsvLine> lines = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+            String line;
+            int lineNumber = 0;
+            while ((line = reader.readLine()) != null) {
+                lineNumber++;
+                // Primeira linha é o cabeçalho
+                if (lineNumber == 1 || line.isBlank()) {
+                    continue;
+                }
+                lines.add(new CsvLine(lineNumber, line.split(",", -1)));
+            }
+        }
+
+        return lines;
+    }
+
+    private AcademicosCertificados parseLine(CsvLine line, Certificados certificado) {
+        String[] columns = line.columns();
+        int lineNumber = line.number();
         if (columns.length < 5) {
             throw new IllegalArgumentException("Linha " + lineNumber + " inválida, formato esperado: academico,email,cpf,ra,ch");
+        }
+
+        String cpf = columns[2].trim();
+        if (!CpfUtils.isValid(cpf)) {
+            throw new IllegalArgumentException("Linha " + lineNumber + " possui CPF inválido: " + cpf);
         }
 
         AcademicoRequestDto academicoDto = new AcademicoRequestDto(
                 columns[0].trim(),
                 columns[1].trim(),
-                columns[2].trim(),
+                cpf,
                 columns[3].trim(),
                 null,
                 null
@@ -118,5 +131,8 @@ public class AcademicoCertificadoService {
         entity.setCh(ch);
         entity.setCreated(Instant.now());
         return entity;
+    }
+
+    private record CsvLine(int number, String[] columns) {
     }
 }

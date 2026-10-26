@@ -43,6 +43,13 @@ public class AcademicoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Acadêmico não encontrado com id: " + id));
     }
 
+    @Transactional(readOnly = true)
+    public AcademicoResponseDto findByCpf(String cpf) {
+        return repository.findByCpf(cpf)
+                .map(mapper::toDtoResponse)
+                .orElseThrow(() -> new ResourceNotFoundException("Academico não encontrado"));
+    }
+
     @Transactional
     public AcademicoResponseDto update(Long id, AcademicoUpdateDto academicoDto) {
         logger.info("Updating academico with id: " + id);
