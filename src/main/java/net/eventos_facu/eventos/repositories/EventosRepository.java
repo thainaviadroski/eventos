@@ -18,15 +18,15 @@ public interface EventosRepository extends JpaRepository<Eventos, Long> {
     Optional<Eventos> findBySlug(String slug);
 
     // Usa o índice FULLTEXT idx_search_eventos (V6): o MATCH precisa listar exatamente as colunas do índice.
-    // "termo" deve vir no formato do BOOLEAN MODE (veja FullTextUtils.toBooleanQuery).
+    // "termo" deve vir limpo por FullTextUtils.toNaturalLanguageQuery.
     @Query(value = """
             SELECT * FROM eventos
-            WHERE MATCH(evento, descricao) AGAINST(:termo IN BOOLEAN MODE)
-            ORDER BY MATCH(evento, descricao) AGAINST(:termo IN BOOLEAN MODE) DESC, id DESC
+            WHERE MATCH(evento, descricao) AGAINST(:termo IN NATURAL LANGUAGE MODE)
+            ORDER BY MATCH(evento, descricao) AGAINST(:termo IN NATURAL LANGUAGE MODE) DESC, id DESC
             """,
             countQuery = """
             SELECT COUNT(*) FROM eventos
-            WHERE MATCH(evento, descricao) AGAINST(:termo IN BOOLEAN MODE)
+            WHERE MATCH(evento, descricao) AGAINST(:termo IN NATURAL LANGUAGE MODE)
             """,
             nativeQuery = true)
     Page<Eventos> search(@Param("termo") String termo, Pageable pageable);

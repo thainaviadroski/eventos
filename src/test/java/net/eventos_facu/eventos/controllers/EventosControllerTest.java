@@ -30,9 +30,9 @@ public class EventosControllerTest {
     // Roda contra o MySQL de dev: o MATCH ... AGAINST é específico do MySQL
     // e depende dos seeds de db/seed (evento "congresso-ciencia-computacao").
     @Test
-    @DisplayName("deve buscar eventos por prefixo, sem diferenciar acentos")
+    @DisplayName("deve buscar eventos sem diferenciar acentos")
     void shouldSearchEventos() throws Exception {
-        mockMvc.perform(get("/api/eventos/search").param("q", "ciencia comp"))
+        mockMvc.perform(get("/api/eventos/search").param("q", "ciencia computacao"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].slug").value("congresso-ciencia-computacao"));
     }

@@ -218,26 +218,26 @@ public class EventosServiceTest {
     class Search {
 
         @Test
-        @DisplayName("deve buscar com a query do BOOLEAN MODE e ignorar o sort do cliente")
-        void shouldSearchWithBooleanQueryWithoutSort() {
+        @DisplayName("deve buscar com o termo normalizado e ignorar o sort do cliente")
+        void shouldSearchWithNormalizedTermWithoutSort() {
             // Arrange
             Eventos entity = buildEntity();
             EventosResponseDto response = buildResponseDto(entity);
             Pageable pageable = PageRequest.of(1, 5, Sort.by("dtInicio"));
             Pageable semSort = PageRequest.of(1, 5);
 
-            when(eventosRepository.search("+semana* +eng*", semSort))
+            when(eventosRepository.search("semana engenharia", semSort))
                     .thenReturn(new PageImpl<>(List.of(entity), semSort, 6));
             when(eventosMapper.toDto(entity)).thenReturn(response);
 
             // Act
-            Page<EventosResponseDto> result = eventosService.search("Semana eng", pageable);
+            Page<EventosResponseDto> result = eventosService.search("Semana de Engenharia", pageable);
 
             // Assert
             assertThat(result.getContent()).containsExactly(response);
             assertThat(result.getTotalElements()).isEqualTo(6);
 
-            verify(eventosRepository).search("+semana* +eng*", semSort);
+            verify(eventosRepository).search("semana engenharia", semSort);
         }
 
         @Test

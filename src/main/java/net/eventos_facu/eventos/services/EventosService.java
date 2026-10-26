@@ -53,7 +53,7 @@ public class EventosService {
 
     @Transactional(readOnly = true)
     public Page<EventosResponseDto> search(String termo, Pageable pageable) {
-        String query = FullTextUtils.toBooleanQuery(termo);
+        String query = FullTextUtils.toNaturalLanguageQuery(termo);
         if (query.isEmpty()) {
             return Page.empty(pageable);
         }

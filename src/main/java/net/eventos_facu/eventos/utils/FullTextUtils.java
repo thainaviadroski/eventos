@@ -20,7 +20,7 @@ public final class FullTextUtils {
     }
 
 
-    public static String toBooleanQuery(String termo) {
+    public static String toNaturalLanguageQuery(String termo) {
         if (termo == null) {
             return "";
         }
@@ -32,7 +32,6 @@ public final class FullTextUtils {
                 .filter(palavra -> palavra.length() >= MIN_TOKEN_SIZE)
                 .filter(palavra -> !STOPWORDS.contains(palavra))
                 .distinct()
-                .map(palavra -> "+" + palavra + "*")
                 .collect(Collectors.joining(" "));
     }
 }
