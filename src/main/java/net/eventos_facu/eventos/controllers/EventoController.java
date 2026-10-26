@@ -39,6 +39,12 @@ public class EventoController {
         return ResponseEntity.ok(service.getAllEventos(pageable)).getBody();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<EventosResponseDto>> searchEventos(@RequestParam String q, Pageable pageable) {
+        logger.info("Searching Eventos with term: {}", q);
+        return ResponseEntity.ok(service.search(q, pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EventosResponseDto> getEventoById(@PathVariable long id) {
         logger.info("Getting Evento with id: {}", id);

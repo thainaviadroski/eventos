@@ -9,9 +9,11 @@ import net.eventos_facu.eventos.entities.Eventos;
 import net.eventos_facu.eventos.exception.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.EventosMapper;
 import net.eventos_facu.eventos.repositories.EventosRepository;
+import net.eventos_facu.eventos.utils.FullTextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +49,18 @@ public class EventosService {
     @Transactional(readOnly = true)
     public Page<EventosResponseDto> getAllEventos(Pageable pageable) {
         return repository.findAll(pageable).map(eventoMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EventosResponseDto> search(String termo, Pageable pageable) {
+        String query = FullTextUtils.toBooleanQuery(termo);
+        if (query.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        // Resultado sempre ordenado por relevância. O sort do cliente é descartado porque a query
+        // é nativa e ele chegaria com nome de propriedade (dtInicio) em vez de coluna (dt_inicio).
+        Pageable semSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return repository.search(query, semSort).map(eventoMapper::toDto);
     }
 
     public EventosResponseDto findById(long id) {

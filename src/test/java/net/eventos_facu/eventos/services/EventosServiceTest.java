@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -208,6 +209,50 @@ public class EventosServiceTest {
             assertThat(result.slug()).isEqualTo(SLUG);
 
             verify(eventosRepository).findBySlug(SLUG);
+        }
+    }
+
+
+    @Nested
+    @DisplayName("Search Eventos")
+    class Search {
+
+        @Test
+        @DisplayName("deve buscar com a query do BOOLEAN MODE e ignorar o sort do cliente")
+        void shouldSearchWithBooleanQueryWithoutSort() {
+            // Arrange
+            Eventos entity = buildEntity();
+            EventosResponseDto response = buildResponseDto(entity);
+            Pageable pageable = PageRequest.of(1, 5, Sort.by("dtInicio"));
+            Pageable semSort = PageRequest.of(1, 5);
+
+            when(eventosRepository.search("+semana* +eng*", semSort))
+                    .thenReturn(new PageImpl<>(List.of(entity), semSort, 6));
+            when(eventosMapper.toDto(entity)).thenReturn(response);
+
+            // Act
+            Page<EventosResponseDto> result = eventosService.search("Semana eng", pageable);
+
+            // Assert
+            assertThat(result.getContent()).containsExactly(response);
+            assertThat(result.getTotalElements()).isEqualTo(6);
+
+            verify(eventosRepository).search("+semana* +eng*", semSort);
+        }
+
+        @Test
+        @DisplayName("deve retornar página vazia sem consultar o banco quando não há palavra pesquisável")
+        void shouldReturnEmptyPageWhenNothingSearchable() {
+            // Arrange
+            Pageable pageable = PageRequest.of(0, 10);
+
+            // Act
+            Page<EventosResponseDto> result = eventosService.search("de com", pageable);
+
+            // Assert
+            assertThat(result.isEmpty()).isTrue();
+
+            verifyNoInteractions(eventosRepository);
         }
     }
 

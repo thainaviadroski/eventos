@@ -1,7 +1,11 @@
 package net.eventos_facu.eventos.repositories;
 
 import net.eventos_facu.eventos.entities.Eventos;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +16,18 @@ public interface EventosRepository extends JpaRepository<Eventos, Long> {
     Optional<List<Eventos>> findByEvento(String evento);
 
     Optional<Eventos> findBySlug(String slug);
+
+    // Usa o índice FULLTEXT idx_search_eventos (V6): o MATCH precisa listar exatamente as colunas do índice.
+    // "termo" deve vir no formato do BOOLEAN MODE (veja FullTextUtils.toBooleanQuery).
+    @Query(value = """
+            SELECT * FROM eventos
+            WHERE MATCH(evento, descricao) AGAINST(:termo IN BOOLEAN MODE)
+            ORDER BY MATCH(evento, descricao) AGAINST(:termo IN BOOLEAN MODE) DESC, id DESC
+            """,
+            countQuery = """
+            SELECT COUNT(*) FROM eventos
+            WHERE MATCH(evento, descricao) AGAINST(:termo IN BOOLEAN MODE)
+            """,
+            nativeQuery = true)
+    Page<Eventos> search(@Param("termo") String termo, Pageable pageable);
 }

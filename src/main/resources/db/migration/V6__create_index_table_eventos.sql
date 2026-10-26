@@ -1,0 +1,1 @@
+CREATE FULLTEXT INDEX idx_search_eventos ON eventos (evento, descricao);
