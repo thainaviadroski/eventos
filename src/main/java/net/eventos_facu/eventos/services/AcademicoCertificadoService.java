@@ -16,6 +16,8 @@ import net.eventos_facu.eventos.repositories.CertificadosRepository;
 import net.eventos_facu.eventos.utils.CpfUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,6 +65,15 @@ public class AcademicoCertificadoService {
         return imported;
     }
 
+    @Transactional(readOnly = true)
+    public Page<AcademicoCertificadoResponseDto> findByAcademicoId(Long academicoId, Pageable pageable) {
+        logger.info("Buscando certificados do academico.id: {}", academicoId);
+        if (!academicosRepository.existsById(academicoId)) {
+            throw new ResourceNotFoundException("Acadêmico não encontrado com id: " + academicoId);
+        }
+        return repository.findByAcademicoId(academicoId, pageable).map(mapper::toDtoResponse);
+    }
+
     private List<CsvLine> readCsv(MultipartFile file) throws IOException {
         List<CsvLine> lines = new ArrayList<>();
 
@@ -71,14 +82,12 @@ public class AcademicoCertificadoService {
             int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
                 lineNumber++;
-                // Primeira linha é o cabeçalho
                 if (lineNumber == 1 || line.isBlank()) {
                     continue;
                 }
-                lines.add(new CsvLine(lineNumber, line.split(",", -1)));
+                lines.add(new CsvLine(lineNumber, line.split("[,;]", -1)));
             }
         }
-
         return lines;
     }
 

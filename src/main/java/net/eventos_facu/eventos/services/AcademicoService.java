@@ -8,9 +8,11 @@ import net.eventos_facu.eventos.entities.Academicos;
 import net.eventos_facu.eventos.exception.ResourceNotFoundException;
 import net.eventos_facu.eventos.mapper.AcademicoMapper;
 import net.eventos_facu.eventos.repositories.AcademicosRepository;
+import net.eventos_facu.eventos.utils.FullTextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,18 @@ public class AcademicoService {
     @Transactional(readOnly = true)
     public Page<AcademicoResponseDto> findAll(Pageable pageable) {
         return repository.findAll(pageable).map(mapper::toDtoResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AcademicoResponseDto> search(String termo, Pageable pageable) {
+        String query = FullTextUtils.toNaturalLanguageQuery(termo);
+        if (query.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        // Mesmo motivo de EventosService.search: query nativa, então o sort do cliente é descartado
+        // e o resultado vem ordenado por relevância.
+        Pageable semSort = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        return repository.search(query, semSort).map(mapper::toDtoResponse);
     }
 
     @Transactional(readOnly = true)

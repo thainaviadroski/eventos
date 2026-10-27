@@ -7,13 +7,16 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "academicos")
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "certificados")
 @EqualsAndHashCode(exclude = "certificados")
+@Entity
+@Table(name = "academicos", indexes = {
+        @Index(name = "idx_search_academicos", columnList = "academico, cpf, ra")
+})
 public class Academicos {
 
     @Id

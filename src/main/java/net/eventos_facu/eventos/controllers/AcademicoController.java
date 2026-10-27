@@ -37,6 +37,12 @@ public class AcademicoController {
         return ResponseEntity.ok(service.findAll(pageable)).getBody();
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Page<AcademicoResponseDto>> searchAcademicos(@RequestParam String q, Pageable pageable) {
+        logger.info("Searching Academicos with term: {}", q);
+        return ResponseEntity.ok(service.search(q, pageable));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<AcademicoResponseDto> getAcademicoById(@PathVariable Long id) {
         return ResponseEntity.ofNullable(service.findById(id));

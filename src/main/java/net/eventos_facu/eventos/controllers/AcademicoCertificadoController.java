@@ -7,8 +7,12 @@ import net.eventos_facu.eventos.dto.academicos.AcademicoCertificadoResponseDto;
 import net.eventos_facu.eventos.services.AcademicoCertificadoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +31,12 @@ public class AcademicoCertificadoController {
     private final Logger logger = LoggerFactory.getLogger(AcademicoCertificadoController.class);
 
     private final AcademicoCertificadoService service;
+
+    @GetMapping("/academico/{academicoId}")
+    public ResponseEntity<Page<AcademicoCertificadoResponseDto>> getCertificadosByAcademico(@PathVariable Long academicoId, Pageable pageable) {
+        logger.info("Request certificados do academico.id: {}", academicoId);
+        return ResponseEntity.ok(service.findByAcademicoId(academicoId, pageable));
+    }
 
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<AcademicoCertificadoResponseDto>> importFromFile(@RequestParam("certificadoId") Long certificadoId,
