@@ -18,7 +18,9 @@ import java.util.Set;
 @Builder
 @Entity
 @EqualsAndHashCode(exclude = {"certificados"})
-@Table(name = "eventos")
+@Table(name = "eventos", indexes = {
+        @Index(name = "idx_search_eventos", columnList = "evento, descricao")
+})
 public class Eventos {
 
     @Id
