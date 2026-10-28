@@ -28,7 +28,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -57,8 +59,15 @@ public class AcademicoCertificadoService {
         Certificados certificado = findCertificado(certificadoId);
         List<AcademicoCertificadoResponseDto> imported = new ArrayList<>();
 
-        for (CsvLine line : readCsv(file)) {
-            AcademicosCertificados entity = parseLine(line, certificado);
+        for (CsvRow row : readCsv(file)) {
+            Academicos academico = resolveAcademico(row.academico());
+            // Também pega o mesmo acadêmico repetido no arquivo com dados diferentes:
+            // a query faz flush dos vínculos salvos nas linhas anteriores.
+            if (repository.existsByAcademicoIdAndCertificadoId(academico.getId(), certificadoId)) {
+                logger.info("Academico.id {} já vinculado ao certificado.id {}, ignorando", academico.getId(), certificadoId);
+                continue;
+            }
+            AcademicosCertificados entity = link(academico, certificado, row.ch());
             imported.add(mapper.toDtoResponse(repository.save(entity)));
         }
 
@@ -74,8 +83,19 @@ public class AcademicoCertificadoService {
         return repository.findByAcademicoId(academicoId, pageable).map(mapper::toDtoResponse);
     }
 
-    private List<CsvLine> readCsv(MultipartFile file) throws IOException {
-        List<CsvLine> lines = new ArrayList<>();
+    @Transactional(readOnly = true)
+    public Page<AcademicoCertificadoResponseDto> findByCertificadoId(Long certificadoId, Pageable pageable) {
+        logger.info("Buscando academicos do certificado.id: {}", certificadoId);
+        if (!certificadosRepository.existsById(certificadoId)) {
+            throw new ResourceNotFoundException("Certificado não encontrado com id: " + certificadoId);
+        }
+        return repository.findByCertificadoId(certificadoId, pageable).map(mapper::toDtoResponse);
+    }
+
+    // LinkedHashSet descarta as linhas repetidas no arquivo e mantém a ordem original.
+    // Valida o arquivo inteiro antes de qualquer acesso ao banco.
+    private Set<CsvRow> readCsv(MultipartFile file) throws IOException {
+        Set<CsvRow> rows = new LinkedHashSet<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
@@ -85,15 +105,15 @@ public class AcademicoCertificadoService {
                 if (lineNumber == 1 || line.isBlank()) {
                     continue;
                 }
-                lines.add(new CsvLine(lineNumber, line.split("[,;]", -1)));
+                if (!rows.add(parseLine(lineNumber, line.split("[,;]", -1)))) {
+                    logger.info("Linha {} duplicada no arquivo, ignorando", lineNumber);
+                }
             }
         }
-        return lines;
+        return rows;
     }
 
-    private AcademicosCertificados parseLine(CsvLine line, Certificados certificado) {
-        String[] columns = line.columns();
-        int lineNumber = line.number();
+    private CsvRow parseLine(int lineNumber, String[] columns) {
         if (columns.length < 5) {
             throw new IllegalArgumentException("Linha " + lineNumber + " inválida, formato esperado: academico,email,cpf,ra,ch");
         }
@@ -119,8 +139,7 @@ public class AcademicoCertificadoService {
             throw new IllegalArgumentException("Linha " + lineNumber + " possui carga horária inválida: " + columns[4]);
         }
 
-        Academicos academico = resolveAcademico(academicoDto);
-        return link(academico, certificado, ch);
+        return new CsvRow(academicoDto, ch);
     }
 
     private Academicos resolveAcademico(AcademicoRequestDto dto) {
@@ -142,6 +161,7 @@ public class AcademicoCertificadoService {
         return entity;
     }
 
-    private record CsvLine(int number, String[] columns) {
+    // Record compara por valor, então duas linhas com os mesmos dados são iguais no Set.
+    private record CsvRow(AcademicoRequestDto academico, Integer ch) {
     }
 }

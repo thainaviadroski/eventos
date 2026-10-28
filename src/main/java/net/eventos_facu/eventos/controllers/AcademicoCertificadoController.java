@@ -38,6 +38,12 @@ public class AcademicoCertificadoController {
         return ResponseEntity.ok(service.findByAcademicoId(academicoId, pageable));
     }
 
+    @GetMapping("/certificado/{certificadoId}")
+    public ResponseEntity<Page<AcademicoCertificadoResponseDto>> getAcademicosByCertificado(@PathVariable Long certificadoId, Pageable pageable) {
+        logger.info("Request academicos do certificado.id: {}", certificadoId);
+        return ResponseEntity.ok(service.findByCertificadoId(certificadoId, pageable));
+    }
+
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<AcademicoCertificadoResponseDto>> importFromFile(@RequestParam("certificadoId") Long certificadoId,
                                                                                   @RequestParam("file") MultipartFile file) throws IOException {
