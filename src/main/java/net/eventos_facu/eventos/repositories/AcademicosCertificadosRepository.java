@@ -14,6 +14,8 @@ public interface AcademicosCertificadosRepository extends JpaRepository<Academic
 
     boolean existsByAcademicoIdAndCertificadoId(Long academicoId, Long certificadoId);
 
+    long deleteByAcademicoIdAndCertificadoId(Long academicoId, Long certificadoId);
+
     // Cada linha aponta para um acadêmico diferente e o mapper lê o nome dele:
     // carrega junto para evitar N+1.
     @EntityGraph(attributePaths = "academico")

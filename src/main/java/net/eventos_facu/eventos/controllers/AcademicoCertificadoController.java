@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,12 @@ public class AcademicoCertificadoController {
     public ResponseEntity<AcademicoCertificadoResponseDto> importManual(@RequestBody @Valid AcademicoCertificadoManualDto dto) {
         logger.info("Request import manual academico, certificado.id: {}", dto.certificadoId());
         return ResponseEntity.ok(service.importManual(dto));
+    }
+
+    @DeleteMapping("/certificado/{certificadoId}/academico/{academicoId}")
+    public ResponseEntity<Void> removeAcademico(@PathVariable Long certificadoId, @PathVariable Long academicoId) {
+        logger.info("Request remover academico.id {} do certificado.id {}", academicoId, certificadoId);
+        service.removeAcademico(certificadoId, academicoId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -101,6 +102,29 @@ public class AcademicoCertificadoControllerTest {
                         .param("certificadoId", String.valueOf(certificadoId)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    // @Transactional: o rollback no fim do teste desfaz a remoção, sem sujar o banco de dev.
+    @Test
+    @Transactional
+    @DisplayName("deve remover o acadêmico do certificado")
+    void shouldRemoveAcademicoDoCertificado() throws Exception {
+        String academico = mockMvc.perform(get("/api/academico/by-cpf/111.111.111-11"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        int academicoId = JsonPath.read(academico, "$.id");
+
+        String certificados = mockMvc.perform(get("/api/academico-certificado/academico/{academicoId}", academicoId))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        int certificadoId = JsonPath.read(certificados, "$.content[0].certificadoId");
+
+        mockMvc.perform(delete("/api/academico-certificado/certificado/{certificadoId}/academico/{academicoId}", certificadoId, academicoId))
+                .andExpect(status().isNoContent());
+
+        // O vínculo não existe mais, então remover de novo retorna 404
+        mockMvc.perform(delete("/api/academico-certificado/certificado/{certificadoId}/academico/{academicoId}", certificadoId, academicoId))
+                .andExpect(status().isNotFound());
     }
 
     @Test

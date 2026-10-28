@@ -231,4 +231,33 @@ public class AcademicoCertificadoServiceTest {
             verifyNoInteractions(repository);
         }
     }
+
+    @Nested
+    @DisplayName("Remove academico from Certificado")
+    class RemoveAcademico {
+
+        @Test
+        @DisplayName("deve remover o vínculo do acadêmico com o certificado")
+        void shouldRemoveAcademicoDoCertificado() {
+            // Arrange
+            when(repository.deleteByAcademicoIdAndCertificadoId(ACADEMICO_ID, CERTIFICADO_ID)).thenReturn(1L);
+
+            // Act
+            service.removeAcademico(CERTIFICADO_ID, ACADEMICO_ID);
+
+            // Assert
+            verify(repository).deleteByAcademicoIdAndCertificadoId(ACADEMICO_ID, CERTIFICADO_ID);
+        }
+
+        @Test
+        @DisplayName("deve lançar exceção quando o acadêmico não está vinculado ao certificado")
+        void shouldThrowWhenVinculoNotFound() {
+            // Arrange
+            when(repository.deleteByAcademicoIdAndCertificadoId(ACADEMICO_ID, CERTIFICADO_ID)).thenReturn(0L);
+
+            // Act & Assert
+            assertThatThrownBy(() -> service.removeAcademico(CERTIFICADO_ID, ACADEMICO_ID))
+                    .isInstanceOf(ResourceNotFoundException.class);
+        }
+    }
 }

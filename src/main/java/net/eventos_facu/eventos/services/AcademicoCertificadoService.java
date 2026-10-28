@@ -92,6 +92,14 @@ public class AcademicoCertificadoService {
         return repository.findByCertificadoId(certificadoId, pageable).map(mapper::toDtoResponse);
     }
 
+    @Transactional
+    public void removeAcademico(Long certificadoId, Long academicoId) {
+        logger.info("Removendo academico.id {} do certificado.id {}", academicoId, certificadoId);
+        if (repository.deleteByAcademicoIdAndCertificadoId(academicoId, certificadoId) == 0) {
+            throw new ResourceNotFoundException("Acadêmico " + academicoId + " não vinculado ao certificado " + certificadoId);
+        }
+    }
+
     // LinkedHashSet descarta as linhas repetidas no arquivo e mantém a ordem original.
     // Valida o arquivo inteiro antes de qualquer acesso ao banco.
     private Set<CsvRow> readCsv(MultipartFile file) throws IOException {
